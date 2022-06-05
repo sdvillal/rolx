@@ -1,0 +1,40 @@
+name: loopy-benchmark
+
+channels:
+  - loopbio
+  - conda-forge
+  - defaults
+
+dependencies:
+  # These might give troubles if run on an existing environment.
+  # If so, let me know.
+  - loopbio::opencv=3.4.1
+  - loopbio::ffmpeg=3.4.2=gpl*
+
+  # Humanize quantities, plus some performance help for our
+  # "check correct when no watermarking"
+  - humanize
+  - python-xxhash
+
+  # thin nice wrapper over popen and pexpect
+  - delegator
+
+  # because we are still on py2...
+  - enum34
+
+  - pip:
+    # Download youtube videos (actually do not bother with pytube)
+    - pytube
+    - youtube-dl
+
+    # Stuff I'm using to look into packed, multithreaded, fetch-friendly...
+    # bunches of JPEGS. Just WIP, but might save you from import errors.
+    # BTW, GulpIO (only py3 and pretty much as mxnet RecordIO)
+    # and TFRecords are out of question ATM.
+    - mxnet-cu80mkl
+    - jagged
+
+    # We need this dev branch - where many hidden bugs will itch you
+    # Probably it won't update, so checkout yourself or just run:
+    #   pip install 'git+ssh://git@github.com/loopbio/python-loopb.git@thread_count#egg=loopb-bview' --upgrade --no-deps
+    - "git+ssh://git@github.com/loopbio/python-loopb.git@thread_count#egg=loopb-bview"

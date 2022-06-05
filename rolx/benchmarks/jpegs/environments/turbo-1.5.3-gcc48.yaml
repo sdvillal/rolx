@@ -1,0 +1,43 @@
+name: jpegs-benchmark-turbo1.5.3-gcc48
+
+channels:
+  - loopbio
+  - conda-forge
+  - defaults
+
+dependencies:
+  - conda-forge::python=2.7
+  - conda-forge::future=0.16.0
+  - conda-forge::six=1.11.0
+
+  - conda-forge::argh=0.26.2
+  - conda-forge::ruamel.yaml=0.15.31
+  - conda-forge::tqdm=4.15.0
+  - conda-forge::psutil=5.2.2
+  - conda-forge::natsort=5.0.2
+  - conda-forge::cytoolz=0.8.2
+  - conda-forge::contextlib2=0.5.5
+  - conda-forge::python-dateutil=2.6.1
+  - conda-forge::pytz=2017.2
+
+  - conda-forge::numpy=1.13
+  - conda-forge::scipy=0.19.1
+  - conda-forge::pandas=0.21
+  - conda-forge::joblib=0.11
+  - conda-forge::matplotlib=2.0.2
+  - conda-forge::seaborn=0.8.1
+
+  - humanize
+  - python-xxhash
+  - delegator
+  - enum34  # remove when moving to python 3
+
+  - loopbio::opencv=3.4.1=*_1  # compiled against turbo 1.5.3
+  - loopbio::libjpeg-turbo=1.5.3
+
+  - pip:
+    - whatami>=5.1.12
+    # - youtube-dl
+    # - mxnet-cu80mkl
+    # - jagged
+    - "--editable=../../../../"  # weird syntax until https://github.com/conda/conda/pull/3969 is merged
