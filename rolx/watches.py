@@ -799,7 +799,7 @@ class Timer(Watch):
         self.aggregator = aggregator
 
     def tic(self):
-        self._start = time.time()
+        self._start = time.perf_counter()
         return self
 
     def toc(self, count=1):
@@ -808,7 +808,7 @@ class Timer(Watch):
             #        the proper fix is to let this be thread-safe
             pass
         # noinspection PyTypeChecker
-        self.aggregator.add(time.time() - self._start, count=count)
+        self.aggregator.add(time.perf_counter() - self._start, count=count)
         self._start = None
         return self
 
@@ -964,7 +964,7 @@ class Timers(MutableMapping):
 
     def to_records(self, t=None):
         if t is None:
-            t = time.time()
+            t = time.perf_counter()
 
         return [{'t': t, 'name': timer.name, 'operations': timer.n, 'units': timer.units,
                  'total': timer.total, 'mean': timer.mean, 'std': timer.std} for timer in self.values()]
