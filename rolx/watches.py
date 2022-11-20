@@ -4,7 +4,9 @@ import contextlib
 import os
 import sys
 from array import array
+
 try:
+    # noinspection PyProtectedMember
     from collections import OrderedDict, MutableMapping, namedtuple
 except ImportError:
     from collections import OrderedDict, namedtuple
@@ -15,11 +17,11 @@ import resource
 import math
 import numpy as np
 
-
 # --- Units
 
 Unit = namedtuple('Unit', ['name', 'plural', 'symbol'])
 FrameUnit = Unit('frame', 'frames', 'f')
+
 
 # --- Cumulative measurements
 # These are meant to be flexible, not high precission or efficient.
@@ -186,6 +188,7 @@ class KeepAllMeanStd(IterativeAggregator):
 
 class KeepLastMeanStd(IterativeAggregator):
     """Sort of simple moving average."""
+
     def __init__(self, name, units=None, add_filter=None,
                  last=100, dtype='d', keep_indices=False):
         super(KeepLastMeanStd, self).__init__(name, units, add_filter)
@@ -300,7 +303,6 @@ class Watch(object):
         return watch_tic_toc(self, count=count)
 
     def __call__(self, f, activate=True):
-
         if not activate:
             return f
 
@@ -308,6 +310,7 @@ class Watch(object):
         def watched_call(*args, **kwargs):
             with self:
                 return f(*args, **kwargs)
+
         return watched_call
 
 
@@ -410,7 +413,7 @@ class Rusager(Watch):
     )
 
     LINUX_MAINTAINED_FIELDS = {
-        'ru_utime': ('s',  'time in user mode'),
+        'ru_utime': ('s', 'time in user mode'),
         'ru_stime': ('s', 'time in system mode'),
 
         'ru_maxrss': ('kB', 'maximum resident set size'),
@@ -800,9 +803,11 @@ class Timer(Watch):
         return self
 
     def toc(self, count=1):
-        while self._start is None:  # FIXME: safeguard against asynchronous code copying before tic() finishes
-                                    # The proper fix is to let this be thread-safe
+        while self._start is None:
+            # FIXME: safeguard against asynchronous code copying before tic() finishes
+            #        the proper fix is to let this be thread-safe
             pass
+        # noinspection PyTypeChecker
         self.aggregator.add(time.time() - self._start, count=count)
         self._start = None
         return self
@@ -855,7 +860,7 @@ class Timers(MutableMapping):
     #
     # Goals:
     #   - Allow dictionary + member like definition
-    #     (helps avoiding namespace pollution)
+    #     (helps avoid namespace pollution)
     #   - Coordinate the collection (e.g. allow to add constraints like "these timers should be called in sequence")
     #   - Pretty printing
     #
@@ -934,8 +939,8 @@ class Timers(MutableMapping):
             stds.append('{std:.{precision}f}'.format(std=timer.std, precision=precision))
             operations.append('%d' % timer.n)
 
-        def maxlen(l):
-            return max(len(elem) for elem in l)
+        def maxlen(lengths):
+            return max(len(elem) for elem in lengths)
 
         longer_name = maxlen(names)
         longer_total = maxlen(totals)
@@ -987,7 +992,6 @@ def meaner(name, units=None, add_filter=None,
 
 
 timer = meaner
-
 
 # TODO: bring timed iterator
 
