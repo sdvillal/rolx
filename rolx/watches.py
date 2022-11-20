@@ -4,7 +4,11 @@ import contextlib
 import os
 import sys
 from array import array
-from collections import OrderedDict, MutableMapping, namedtuple
+try:
+    from collections import OrderedDict, MutableMapping, namedtuple
+except ImportError:
+    from collections import OrderedDict, namedtuple
+    from collections.abc import MutableMapping
 from functools import wraps
 import time
 import resource
@@ -434,13 +438,21 @@ class Rusager(Watch):
     ru_nvcsw = None
     ru_nivcsw = None
 
-    def __init__(self, who=resource.RUSAGE_SELF, fields=None, aggregator=OnlineMeanStd, unit=FrameUnit):
+    def __init__(self,
+                 who=resource.RUSAGE_SELF,
+                 fields=None,
+                 aggregator=OnlineMeanStd,
+                 unit=FrameUnit,
+                 fail_if_not_in_linux=False):
         super(Rusager, self).__init__(unit=unit)
 
         # N.B. units can change if run somewhere other than linux, so that would warrant
         # different metadata for the measurements.
         if not sys.platform.startswith('linux'):
-            raise Exception('Only linux is supported by rusager at the moment')
+            if fail_if_not_in_linux:
+                raise Exception('Only linux is supported by rusager at the moment')
+            else:
+                print('WARNING: Only linux is supported by rusager at the moment')
 
         self.who = who
 
@@ -976,6 +988,8 @@ def meaner(name, units=None, add_filter=None,
 
 timer = meaner
 
+
+# TODO: bring timed iterator
 
 #
 # if __name__ == '__main__':
